@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import * as request from 'request';
-import * as formData from 'form-data';
 import * as program from 'commander';
 
 let targetUrl: string;
