@@ -1,0 +1,20 @@
+{
+  "name": "discourse-data-generator",
+  "version": "1.0.0",
+  "description": "inject test data into discourse",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discourse",
+    "test"
+  ],
+  "author": "Simon Wu",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.2.3",
+    "typescript": "^2.6.2"
+  }
+}
