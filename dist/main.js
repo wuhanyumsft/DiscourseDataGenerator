@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var request = require("request");
 var program = require("commander");
+var sleep = require('thread-sleep');
 var targetUrl;
 program
     .version("v" + require('../package.json').version)
@@ -50,12 +51,20 @@ function fireRequest(data, title, count) {
         if (err) {
             console.error(count + ': Upload failed:', err);
         }
-        body = JSON.parse(body);
-        if (!body.errors) {
-            console.log(count + ': Upload successful!  Server responded with:', body);
+        try {
+            body = JSON.parse(body);
+            if (!body.errors) {
+                console.log(count + ': Upload successful!  Server responded with:', body);
+            }
+            else {
+                console.error(count + ': Upload failed:', body.errors);
+            }
         }
-        else {
-            console.error(count + ': Upload failed:', body.errors);
+        catch (e) {
+            var sleepSeconds = 60;
+            console.log("Error happen: " + e);
+            console.log("Sleep for " + sleepSeconds + " seconds.");
+            sleep(sleepSeconds / 1000);
         }
         if (count > 1) {
             fireRequest(data, title, count - 1);

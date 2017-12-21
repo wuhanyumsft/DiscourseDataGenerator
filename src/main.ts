@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as request from 'request';
 import * as program from 'commander';
+let sleep = require('thread-sleep');
 
 let targetUrl: string;
 program
@@ -54,11 +55,18 @@ function fireRequest(data: any, title: string, count: number): void {
         if (err) {
             console.error(count + ': Upload failed:', err);
         }
-        body = JSON.parse(body);
-        if (!body.errors) {
-            console.log(count + ': Upload successful!  Server responded with:', body);
-        } else {
-            console.error(count + ': Upload failed:', body.errors);
+        try {
+            body = JSON.parse(body);
+            if (!body.errors) {
+                console.log(count + ': Upload successful!  Server responded with:', body);
+            } else {
+                console.error(count + ': Upload failed:', body.errors);
+            }
+        } catch (e) {
+            let sleepSeconds = 60;
+            console.log(`Error happen: ${e}`);
+            console.log(`Sleep for ${sleepSeconds} seconds.`);
+            sleep(sleepSeconds / 1000);
         }
 
         if (count > 1) {
