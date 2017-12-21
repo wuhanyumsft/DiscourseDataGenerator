@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var request = require("request");
 var program = require("commander");
-var sleep = require('thread-sleep');
+var threadSleep = require('thread-sleep');
 var targetUrl;
 program
     .version("v" + require('../package.json').version)
@@ -37,6 +37,11 @@ var data = {
 };
 var title = program.title;
 fireRequest(data, title, count);
+function sleep() {
+    var sleepSeconds = 60;
+    console.log("Sleep for " + sleepSeconds + " seconds.");
+    threadSleep(sleepSeconds / 1000);
+}
 function fireRequest(data, title, count) {
     if (count > 1) {
         data.title = title + " " + count;
@@ -58,13 +63,14 @@ function fireRequest(data, title, count) {
             }
             else {
                 console.error(count + ': Upload failed:', body.errors);
+                if (body.errors.indexOf('daily limit') >= 0) {
+                    sleep();
+                }
             }
         }
         catch (e) {
-            var sleepSeconds = 60;
             console.log("Error happen: " + e);
-            console.log("Sleep for " + sleepSeconds + " seconds.");
-            sleep(sleepSeconds / 1000);
+            sleep();
         }
         if (count > 1) {
             fireRequest(data, title, count - 1);
