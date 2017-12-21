@@ -53,31 +53,32 @@ function fireRequest(data: any, title: string, count: number): void {
     } else {
         data.title = title;
     }
+    try {
+        request.post({
+            url: `http://${targetUrl}/posts`,
+            formData: data
+        }, (err, httpResponse, body) => {
+            if (err) {
+                console.error(count + ': Upload failed:', err);
+            }
 
-    request.post({
-        url: `http://${targetUrl}/posts`,
-        formData: data
-    }, (err, httpResponse, body) => {
-        if (err) {
-            console.error(count + ': Upload failed:', err);
-        }
-        try {
             body = JSON.parse(body);
             if (!body.errors) {
                 console.log(count + ': Upload successful!  Server responded with:', body);
             } else {
                 console.error(count + ': Upload failed:', body.errors);
                 if (body.errors.indexOf('daily limit') >= 0) {
-                    sleep();
+                    throw 'reach api limit';
                 }
             }
-        } catch (e) {
-            console.log(`Error happen: ${e}`);
-            sleep();
-        }
 
-        if (count > 1) {
-            fireRequest(data, title, count - 1);
-        }
-    });
+            if (count > 1) {
+                fireRequest(data, title, count - 1);
+            }
+        });
+    } catch (e) {
+        console.log(`Error happen: ${e}`);
+        sleep();
+        fireRequest(data, title, count);
+    }
 }
