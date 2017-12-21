@@ -61,19 +61,24 @@ function fireRequest(data: any, title: string, count: number): void {
             if (err) {
                 console.error(count + ': Upload failed:', err);
             }
-
-            body = JSON.parse(body);
-            if (!body.errors) {
-                console.log(count + ': Upload successful!  Server responded with:', body);
-            } else {
-                console.error(count + ': Upload failed:', body.errors);
-                if (body.errors.indexOf('daily limit') >= 0) {
-                    throw 'reach api limit';
+            try {
+                body = JSON.parse(body);
+                if (!body.errors) {
+                    console.log(count + ': Upload successful!  Server responded with:', body);
+                } else {
+                    console.error(count + ': Upload failed:', body.errors);
+                    if (body.errors.indexOf('daily limit') >= 0) {
+                        throw 'reach api limit';
+                    }
                 }
-            }
 
-            if (count > 1) {
-                fireRequest(data, title, count - 1);
+                if (count > 1) {
+                    fireRequest(data, title, count - 1);
+                }
+            } catch (e) {
+                console.log(`Error happen: ${e}`);
+                sleep();
+                fireRequest(data, title, count);
             }
         });
     } catch (e) {
