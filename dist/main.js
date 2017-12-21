@@ -40,7 +40,7 @@ fireRequest(data, title, count);
 function sleep() {
     var sleepSeconds = 60;
     console.log("Sleep for " + sleepSeconds + " seconds.");
-    threadSleep(sleepSeconds / 1000);
+    threadSleep(sleepSeconds * 1000);
 }
 function fireRequest(data, title, count) {
     if (count > 1) {
@@ -64,7 +64,7 @@ function fireRequest(data, title, count) {
                 }
                 else {
                     console.error(count + ': Upload failed:', body.errors);
-                    if (body.errors[0] && body.errors[0].indexOf('daily limit') >= 0) {
+                    if (body.errors[0] && body.errors[0].toString().indexOf('daily limit') >= 0) {
                         throw 'reach api limit';
                     }
                 }
