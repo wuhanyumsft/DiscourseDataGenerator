@@ -64,7 +64,7 @@ function fireRequest(data, title, count) {
                 }
                 else {
                     console.error(count + ': Upload failed:', body.errors);
-                    if (body.errors.indexOf('daily limit') >= 0) {
+                    if (body.errors[0] && body.errors[0].indexOf('daily limit') >= 0) {
                         throw 'reach api limit';
                     }
                 }
