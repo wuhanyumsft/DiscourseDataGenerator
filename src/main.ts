@@ -63,14 +63,14 @@ function fireRequest(client: any, data: any, title: string, count: number): void
     try {
         client.createTopic(data.title, data.raw, 0, (err: any, body: any, code: any) => {
             if (err) {
-                console.error(`{count}: Upload failed: ${err}`);
+                console.error(`${count}: Upload failed: ${err}`);
             }
             try {
                 body = JSON.parse(body);
                 if (!body.errors) {
-                    console.log(`{count}: Upload successful!`);
+                    console.log(`${count}: Upload successful!`);
                 } else {
-                    console.error(`{count}: Upload failed: ${body.errors}`);
+                    console.error(`${count}: Upload failed: ${body.errors}`);
                     if (body.errors[0] && body.errors[0].toString().indexOf('daily limit') >= 0) {
                         throw 'reach api limit';
                     }
