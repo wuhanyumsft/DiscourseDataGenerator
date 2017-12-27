@@ -2,6 +2,7 @@
 import * as request from 'request';
 import * as program from 'commander';
 let threadSleep = require('thread-sleep');
+let discourse = require('discourse-sdk');
 
 let targetUrl: string;
 program
@@ -37,9 +38,15 @@ let data = {
     raw: program.content
 };
 
+if (!(targetUrl.indexOf('http') === 0)) {
+    targetUrl = `http://${targetUrl}`;
+}
+
+let client = new discourse(targetUrl, program.apikey, program.username);
+
 let title: string = program.title;
 
-fireRequest(data, title, count);
+fireRequest(client, data, title, count);
 
 function sleep(): void {
     let sleepSeconds = 60;
@@ -47,43 +54,40 @@ function sleep(): void {
     threadSleep(sleepSeconds * 1000);
 }
 
-function fireRequest(data: any, title: string, count: number): void {
+function fireRequest(client: any, data: any, title: string, count: number): void {
     if (count > 1) {
         data.title = `${title} ${count}`;
     } else {
         data.title = title;
     }
     try {
-        request.post({
-            url: `http://${targetUrl}/posts`,
-            formData: data
-        }, (err, httpResponse, body) => {
+        client.createTopic(data.title, data.raw, 0, (err: any, body: any, code: any) => {
             if (err) {
-                console.error(count + ': Upload failed:', err);
+                console.error(`{count}: Upload failed: ${err}`);
             }
             try {
                 body = JSON.parse(body);
                 if (!body.errors) {
-                    console.log(count + ': Upload successful!  Server responded with:', body);
+                    console.log(`{count}: Upload successful!`);
                 } else {
-                    console.error(count + ': Upload failed:', body.errors);
+                    console.error(`{count}: Upload failed: ${body.errors}`);
                     if (body.errors[0] && body.errors[0].toString().indexOf('daily limit') >= 0) {
                         throw 'reach api limit';
                     }
                 }
 
                 if (count > 1) {
-                    fireRequest(data, title, count - 1);
+                    fireRequest(client, data, title, count - 1);
                 }
             } catch (e) {
                 console.log(`Error happen: ${e}`);
                 sleep();
-                fireRequest(data, title, count);
+                fireRequest(client, data, title, count);
             }
         });
     } catch (e) {
         console.log(`Error happen: ${e}`);
         sleep();
-        fireRequest(data, title, count);
+        fireRequest(client, data, title, count);
     }
 }

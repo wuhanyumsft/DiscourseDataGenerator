@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var request = require("request");
 var program = require("commander");
 var threadSleep = require('thread-sleep');
+var discourse = require('discourse-sdk');
 var targetUrl;
 program
     .version("v" + require('../package.json').version)
@@ -35,14 +35,18 @@ var data = {
     title: program.title,
     raw: program.content
 };
+if (!(targetUrl.indexOf('http') === 0)) {
+    targetUrl = "http://" + targetUrl;
+}
+var client = new discourse(targetUrl, program.apikey, program.username);
 var title = program.title;
-fireRequest(data, title, count);
+fireRequest(client, data, title, count);
 function sleep() {
     var sleepSeconds = 60;
     console.log("Sleep for " + sleepSeconds + " seconds.");
     threadSleep(sleepSeconds * 1000);
 }
-function fireRequest(data, title, count) {
+function fireRequest(client, data, title, count) {
     if (count > 1) {
         data.title = title + " " + count;
     }
@@ -50,38 +54,35 @@ function fireRequest(data, title, count) {
         data.title = title;
     }
     try {
-        request.post({
-            url: "http://" + targetUrl + "/posts",
-            formData: data
-        }, function (err, httpResponse, body) {
+        client.createTopic(data.title, data.raw, 0, function (err, body, code) {
             if (err) {
-                console.error(count + ': Upload failed:', err);
+                console.error("{count}: Upload failed: " + err);
             }
             try {
                 body = JSON.parse(body);
                 if (!body.errors) {
-                    console.log(count + ': Upload successful!  Server responded with:', body);
+                    console.log("{count}: Upload successful!");
                 }
                 else {
-                    console.error(count + ': Upload failed:', body.errors);
+                    console.error("{count}: Upload failed: " + body.errors);
                     if (body.errors[0] && body.errors[0].toString().indexOf('daily limit') >= 0) {
                         throw 'reach api limit';
                     }
                 }
                 if (count > 1) {
-                    fireRequest(data, title, count - 1);
+                    fireRequest(client, data, title, count - 1);
                 }
             }
             catch (e) {
                 console.log("Error happen: " + e);
                 sleep();
-                fireRequest(data, title, count);
+                fireRequest(client, data, title, count);
             }
         });
     }
     catch (e) {
         console.log("Error happen: " + e);
         sleep();
-        fireRequest(data, title, count);
+        fireRequest(client, data, title, count);
     }
 }
