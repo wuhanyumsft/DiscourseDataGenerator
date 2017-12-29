@@ -43,7 +43,7 @@ if (!(targetUrl.indexOf('http') === 0)) {
 var client = new discourse(targetUrl, program.apikey, program.username);
 var title = program.title;
 var array = _.range(count);
-async.forEachLimit(array, 10, function (index) {
+async.forEach(array, function (index) {
     fireRequest(client, data, title, index);
 }, function (err) {
     console.log(err);
