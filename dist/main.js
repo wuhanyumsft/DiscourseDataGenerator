@@ -61,6 +61,13 @@ async.eachLimit(array, parellel, function (index, callback) {
     client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), 0, function (err, body, statusCode) {
         if (statusCode === 200) {
             console.log(index + " uploaded.");
+            var response_1 = JSON.parse(body);
+            var posts = _.range(_.random(10));
+            async.eachLimit(posts, 3, function (post, callback) {
+                client.replyToTopic(randomText.getTextBlock(textOptions), response_1.topic_id, function (err, body, statusCode) {
+                    callback();
+                });
+            });
         }
         else {
             try {
