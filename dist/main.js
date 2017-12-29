@@ -52,7 +52,7 @@ var client = new discourse(targetUrl, program.apikey, program.username);
 var title = program.title;
 var array = _.range(count);
 console.log("size " + count + " array ready.");
-async.eachLimit(array, 10, function (index, callback) {
+async.eachLimit(array, parellel, function (index, callback) {
     data.title = title + " " + index;
     client.createTopic(data.title, data.raw, 0, function (err, body, statusCode) {
         if (statusCode === 200) {

@@ -59,7 +59,7 @@ let title: string = program.title;
 
 let array = _.range(count);
 console.log(`size ${count} array ready.`);
-async.eachLimit(array, 10, (index, callback) => {
+async.eachLimit(array, parellel, (index, callback) => {
     data.title = `${title} ${index}`;
     client.createTopic(data.title, data.raw, 0, (err: string, body: string, statusCode: number) => {
         if (statusCode === 200) {
