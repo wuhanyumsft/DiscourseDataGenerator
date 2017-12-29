@@ -35,7 +35,7 @@ if (program.count) {
 var parellel = 10;
 if (program.parellel) {
     try {
-        count = parseInt(program.parellel, 10);
+        parellel = parseInt(program.parellel, 10);
     }
     catch (e) { }
 }
