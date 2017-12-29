@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import * as request from 'request';
 import * as program from 'commander';
+import * as async from 'async';
+import * as _ from 'lodash';
 let threadSleep = require('thread-sleep');
 let discourse = require('discourse-sdk');
 
@@ -46,7 +48,12 @@ let client = new discourse(targetUrl, program.apikey, program.username);
 
 let title: string = program.title;
 
-fireRequest(client, data, title, count);
+let array = _.range(count);
+async.forEachLimit(array, 10, (index) => {
+    fireRequest(client, data, title, index);
+}, (err) => {
+    console.log(err);
+});
 
 function sleep(): void {
     let sleepSeconds = 60;
@@ -75,12 +82,9 @@ function fireRequest(client: any, data: any, title: string, count: number): void
                         throw 'reach api limit';
                     }
                 }
-
-                if (count > 1) {
-                    fireRequest(client, data, title, count - 1);
-                }
             } catch (e) {
                 console.log(`Error happen: ${e}`);
+                console.log(body);
                 sleep();
                 fireRequest(client, data, title, count);
             }

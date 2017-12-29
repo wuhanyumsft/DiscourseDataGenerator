@@ -23,11 +23,16 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
+    "@types/async": "^2.0.46",
     "@types/commander": "^2.12.2",
+    "@types/lodash": "^4.14.91",
     "@types/request": "^2.0.8",
+    "async": "^2.6.0",
     "commander": "^2.12.2",
     "discourse-sdk": "^1.0.3",
+    "lodash": "^4.17.4",
     "request": "^2.83.0",
-    "thread-sleep": "^2.0.0"
+    "thread-sleep": "^2.0.0",
+    "threadpool": "^0.9.5"
   }
 }
