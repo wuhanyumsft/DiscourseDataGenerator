@@ -31,6 +31,7 @@
     "commander": "^2.12.2",
     "discourse-sdk": "^1.0.3",
     "lodash": "^4.17.4",
+    "random-textblock": "^1.1.1",
     "request": "^2.83.0",
     "thread-sleep": "^2.0.0",
     "threadpool": "^0.9.5"
