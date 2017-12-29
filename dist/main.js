@@ -45,52 +45,28 @@ var title = program.title;
 var array = _.range(count);
 console.log("size " + count + " array ready.");
 async.eachLimit(array, 10, function (index, callback) {
-    fireRequest(client, data, title, index);
-    callback();
+    data.title = title + " " + index;
+    client.createTopic(data.title, data.raw, 0, function (err, body, statusCode) {
+        if (statusCode === 200) {
+            console.log(index + " uploaded.");
+        }
+        else {
+            try {
+                var error = JSON.parse(body);
+                console.error(index + " failed: " + error.errors[0]);
+            }
+            catch (_a) {
+                console.error(index + " failed: " + body);
+            }
+        }
+        callback();
+    });
 }, function (err) {
-    console.log(err);
+    console.error(err);
 });
 console.log('Exit success.');
 function sleep() {
     var sleepSeconds = 60;
     console.log("Sleep for " + sleepSeconds + " seconds.");
     threadSleep(sleepSeconds * 1000);
-}
-function fireRequest(client, data, title, count) {
-    if (count > 1) {
-        data.title = title + " " + count;
-    }
-    else {
-        data.title = title;
-    }
-    try {
-        client.createTopic(data.title, data.raw, 0, function (err, body, code) {
-            if (err) {
-                console.error(count + ": Upload failed: " + err);
-            }
-            try {
-                body = JSON.parse(body);
-                if (!body.errors) {
-                    console.log(count + ": Upload successful!");
-                }
-                else {
-                    console.error(count + ": Upload failed: " + body.errors);
-                    if (body.errors[0] && body.errors[0].toString().indexOf('daily limit') >= 0) {
-                        throw 'reach api limit';
-                    }
-                }
-            }
-            catch (e) {
-                console.log("Error happen: " + e);
-                console.log(body);
-                sleep();
-                fireRequest(client, data, title, count);
-            }
-        });
-    }
-    catch (e) {
-        console.log("Error happen: " + e);
-        sleep();
-        fireRequest(client, data, title, count);
-    }
 }
