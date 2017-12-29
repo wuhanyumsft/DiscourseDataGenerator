@@ -49,7 +49,8 @@ let client = new discourse(targetUrl, program.apikey, program.username);
 let title: string = program.title;
 
 let array = _.range(count);
-async.forEach(array, (index) => {
+console.log('array ready.');
+async.forEachLimit(array, 10, (index) => {
     fireRequest(client, data, title, index);
 }, (err) => {
     console.log(err);
