@@ -3,6 +3,7 @@ import * as request from 'request';
 import * as program from 'commander';
 import * as async from 'async';
 import * as _ from 'lodash';
+import { ErrorCallback } from 'async';
 let threadSleep = require('thread-sleep');
 let discourse = require('discourse-sdk');
 
@@ -49,12 +50,14 @@ let client = new discourse(targetUrl, program.apikey, program.username);
 let title: string = program.title;
 
 let array = _.range(count);
-console.log('array ready.');
-async.forEachLimit(array, 10, (index) => {
+console.log(`size ${count} array ready.`);
+async.eachLimit(array, 10, (index, callback) => {
     fireRequest(client, data, title, index);
+    callback();
 }, (err) => {
     console.log(err);
 });
+console.log('Exit success.');
 
 function sleep(): void {
     let sleepSeconds = 60;

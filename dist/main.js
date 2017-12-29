@@ -43,12 +43,14 @@ if (!(targetUrl.indexOf('http') === 0)) {
 var client = new discourse(targetUrl, program.apikey, program.username);
 var title = program.title;
 var array = _.range(count);
-console.log('array ready.');
-async.forEachLimit(array, 10, function (index) {
+console.log("size " + count + " array ready.");
+async.eachLimit(array, 10, function (index, callback) {
     fireRequest(client, data, title, index);
+    callback();
 }, function (err) {
     console.log(err);
 });
+console.log('Exit success.');
 function sleep() {
     var sleepSeconds = 60;
     console.log("Sleep for " + sleepSeconds + " seconds.");
