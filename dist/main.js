@@ -59,28 +59,32 @@ var array = _.range(count);
 var categories = [0, 6, 7, 8, 10, 11, 12];
 console.log("size " + count + " array ready.");
 async.eachLimit(array, parellel, function (index, callback) {
-    var category = categories[_.random(6)];
+    var category = categories[_.random(categories.length - 1)];
     client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), category.toString(), function (err, body, statusCode) {
-        if (statusCode === 200) {
-            console.log(index + " uploaded.");
-            var response_1 = JSON.parse(body);
-            var posts = _.range(_.random(1));
-            async.eachLimit(posts, 1, function (post, callback) {
-                client.replyToTopic(randomText.getTextBlock(textOptions), response_1.topic_id, function (err, body, statusCode) {
-                    callback();
-                });
-            });
-        }
-        else {
-            try {
-                var error = JSON.parse(body);
-                console.error(index + " failed: " + error.errors[0]);
+        try {
+            if (statusCode === 200) {
+                console.log(index + " uploaded.");
+                var response = JSON.parse(body);
+                if (_.random(10) > 7) {
+                    client.replyToTopic(randomText.getTextBlock(textOptions), response.topic_id, function (err, body, statusCode) { });
+                }
             }
-            catch (_a) {
-                console.error(index + " failed: " + body);
+            else {
+                try {
+                    var error = JSON.parse(body);
+                    console.error(index + " failed: " + error.errors[0]);
+                }
+                catch (_a) {
+                    console.error(index + " failed: " + body);
+                }
             }
         }
-        callback();
+        catch (e) {
+            console.error(e);
+        }
+        finally {
+            callback();
+        }
     });
 }, function (err) {
     console.error(err);

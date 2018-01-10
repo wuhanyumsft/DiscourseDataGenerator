@@ -65,26 +65,28 @@ let array = _.range(count);
 let categories = [0, 6, 7, 8, 10, 11, 12];
 console.log(`size ${count} array ready.`);
 async.eachLimit(array, parellel, (index, callback) => {
-    let category = categories[_.random(6)];
+    let category = categories[_.random(categories.length - 1)];
     client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), category.toString(), (err: string, body: string, statusCode: number) => {
-        if (statusCode === 200) {
-            console.log(`${index} uploaded.`);
-            let response = JSON.parse(body);
-            let posts = _.range(_.random(1));
-            async.eachLimit(posts, 1, (post, callback) => {
-                client.replyToTopic(randomText.getTextBlock(textOptions), response.topic_id, (err: string, body: string, statusCode: number) => {
-                    callback();
-                });
-            });
-        } else {
-            try {
-                let error = JSON.parse(body);
-                console.error(`${index} failed: ${error.errors[0]}`);
-            } catch {
-                console.error(`${index} failed: ${body}`);
+        try {
+            if (statusCode === 200) {
+                console.log(`${index} uploaded.`);
+                let response = JSON.parse(body);
+                if (_.random(10) > 7) {
+                    client.replyToTopic(randomText.getTextBlock(textOptions), response.topic_id, (err: string, body: string, statusCode: number) => {});
+                }
+            } else {
+                try {
+                    let error = JSON.parse(body);
+                    console.error(`${index} failed: ${error.errors[0]}`);
+                } catch {
+                    console.error(`${index} failed: ${body}`);
+                }
             }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            callback();
         }
-        callback();
     });
 }, (err) => {
     console.error(err);
