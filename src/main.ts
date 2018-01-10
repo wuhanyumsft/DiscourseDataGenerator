@@ -62,14 +62,16 @@ let client = new discourse(targetUrl, program.apikey, program.username);
 let title: string = program.title;
 
 let array = _.range(count);
+let categories = [0, 6, 7, 8, 10, 11, 12];
 console.log(`size ${count} array ready.`);
 async.eachLimit(array, parellel, (index, callback) => {
-    client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), 0, (err: string, body: string, statusCode: number) => {
+    let category = categories[_.random(6)];
+    client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), category.toString(), (err: string, body: string, statusCode: number) => {
         if (statusCode === 200) {
             console.log(`${index} uploaded.`);
             let response = JSON.parse(body);
-            let posts = _.range(_.random(10));
-            async.eachLimit(posts, 3, (post, callback) => {
+            let posts = _.range(_.random(1));
+            async.eachLimit(posts, 1, (post, callback) => {
                 client.replyToTopic(randomText.getTextBlock(textOptions), response.topic_id, (err: string, body: string, statusCode: number) => {
                     callback();
                 });

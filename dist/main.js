@@ -56,14 +56,16 @@ if (!(targetUrl.indexOf('http') === 0)) {
 var client = new discourse(targetUrl, program.apikey, program.username);
 var title = program.title;
 var array = _.range(count);
+var categories = [0, 6, 7, 8, 10, 11, 12];
 console.log("size " + count + " array ready.");
 async.eachLimit(array, parellel, function (index, callback) {
-    client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), 0, function (err, body, statusCode) {
+    var category = categories[_.random(6)];
+    client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), category.toString(), function (err, body, statusCode) {
         if (statusCode === 200) {
             console.log(index + " uploaded.");
             var response_1 = JSON.parse(body);
-            var posts = _.range(_.random(10));
-            async.eachLimit(posts, 3, function (post, callback) {
+            var posts = _.range(_.random(1));
+            async.eachLimit(posts, 1, function (post, callback) {
                 client.replyToTopic(randomText.getTextBlock(textOptions), response_1.topic_id, function (err, body, statusCode) {
                     callback();
                 });
