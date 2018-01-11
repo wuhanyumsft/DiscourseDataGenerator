@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var program = require("commander");
 var async = require("async");
 var _ = require("lodash");
-var discourse = require('discourse-sdk');
+var discourse = require('discourse-siw-sdk');
 var targetUrl;
 program
     .version("v" + require('../package.json').version)
@@ -57,6 +57,7 @@ var client = new discourse(targetUrl, program.apikey, program.username);
 var title = program.title;
 var array = _.range(count);
 var categories = [0, 6, 7, 8, 10, 11, 12];
+var tags = ['javascript', 'java', 'csharp', 'android', 'jquery', 'python', 'html', 'ios', 'css', 'mysql', 'nodejs', 'xml', 'swift', 'ruby', 'ajax', 'regex'];
 console.log("size " + count + " array ready.");
 async.eachLimit(array, parellel, function (index, callback) {
     var category = categories[_.random(categories.length - 1)];
@@ -83,7 +84,7 @@ async.eachLimit(array, parellel, function (index, callback) {
         finally {
             callback();
         }
-    });
+    }, _.sampleSize(tags, _.random(5)));
 }, function (err) {
     console.error(err);
 });

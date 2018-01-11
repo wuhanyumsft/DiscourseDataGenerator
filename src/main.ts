@@ -3,7 +3,7 @@ import * as request from 'request';
 import * as program from 'commander';
 import * as async from 'async';
 import * as _ from 'lodash';
-let discourse = require('discourse-sdk');
+let discourse = require('discourse-siw-sdk');
 
 let targetUrl: string;
 program
@@ -63,6 +63,7 @@ let title: string = program.title;
 
 let array = _.range(count);
 let categories = [0, 6, 7, 8, 10, 11, 12];
+let tags = ['javascript', 'java', 'csharp', 'android', 'jquery', 'python', 'html', 'ios', 'css', 'mysql', 'nodejs', 'xml', 'swift', 'ruby', 'ajax', 'regex'];
 console.log(`size ${count} array ready.`);
 async.eachLimit(array, parellel, (index, callback) => {
     let category = categories[_.random(categories.length - 1)];
@@ -85,7 +86,7 @@ async.eachLimit(array, parellel, (index, callback) => {
         } finally {
             callback();
         }
-    });
+    }, _.sampleSize(tags, _.random(5)));
 }, (err) => {
     console.error(err);
 });
