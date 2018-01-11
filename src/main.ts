@@ -66,7 +66,7 @@ let categories = [0, 6, 7, 8, 10, 11, 12];
 console.log(`size ${count} array ready.`);
 async.eachLimit(array, parellel, (index, callback) => {
     let category = categories[_.random(categories.length - 1)];
-    client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), category.toString(), (err: string, body: string, statusCode: number) => {
+    client.createTopic(randomText.getTextBlock(titleOptions), randomText.getTextBlock(textOptions), category, (err: string, body: string, statusCode: number) => {
         try {
             if (statusCode === 200) {
                 console.log(`${index} uploaded.`);
