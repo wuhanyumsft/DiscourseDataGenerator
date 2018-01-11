@@ -1,6 +1,6 @@
 {
   "name": "discourse-data-generator",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "inject test data into discourse",
   "main": "dist/main.js",
   "bin": {
