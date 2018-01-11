@@ -71,9 +71,7 @@ async.eachLimit(array, parellel, (index, callback) => {
             if (statusCode === 200) {
                 console.log(`${index} uploaded.`);
                 let response = JSON.parse(body);
-                if (_.random(10) > 7) {
-                    client.replyToTopic(randomText.getTextBlock(textOptions), response.topic_id, (err: string, body: string, statusCode: number) => {});
-                }
+                replyTopic(response.topic_id);
             } else {
                 try {
                     let error = JSON.parse(body);
@@ -92,3 +90,11 @@ async.eachLimit(array, parellel, (index, callback) => {
     console.error(err);
 });
 console.log('Exit success.');
+
+function replyTopic(topicId: string) {
+    if (_.random(100) > 75) {
+        client.replyToTopic(randomText.getTextBlock(textOptions), topicId, (err: string, body: string, statusCode: number) => {
+            replyTopic(topicId);
+        });
+    }
+}
