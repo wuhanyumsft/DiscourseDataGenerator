@@ -15,6 +15,10 @@
   ],
   "author": "Simon Wu",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wuhanyumsft/DiscourseDataGenerator.git"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-tslint": "^8.1.2",
